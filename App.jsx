@@ -18,7 +18,7 @@ export const App = () => {
   const handlePingMe = async () => {
     try {
       const docRef = await addDoc(collection(db, "pings"), {
-        message: `Hi from a ${Device.modelName}`,
+        message: `Hi from a ${Device.modelName} at ${new Date().toUTCString()}`,
       });
       Toast.show('Hi there 👋. Your ping id is: ' + docRef.id, {
         duration: Toast.durations.LONG,
