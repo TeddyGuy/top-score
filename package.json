@@ -11,8 +11,13 @@
   "dependencies": {
     "expo": "~46.0.16",
     "expo-status-bar": "~1.4.0",
+    "firebase": "^9.14.0",
+    "firebase-admin": "^11.3.0",
     "react": "18.0.0",
-    "react-native": "0.69.6"
+    "react-native": "0.69.6",
+    "react-native-root-toast": "^3.3.1",
+    "expo-device": "~4.3.0",
+    "expo-blur": "~11.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
