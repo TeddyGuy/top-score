@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     },
     modalContainer: {
         flex: 1,
-        backgroundColor: 'transparent',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         padding: 24,
         alignItems: 'center',
         justifyContent: 'center'
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
         borderRadius: 50,
         paddingVertical: 16,
         paddingHorizontal: 30,
-        marginBottom: 10,
+        marginBottom: 12,
         alignSelf: 'stretch'
     },
     centeredView: {
@@ -32,9 +32,11 @@ export const styles = StyleSheet.create({
     },
     modalView: {
         margin: 20,
-        backgroundColor: "#a44200",
+        backgroundColor: "#3c1518",
         borderRadius: 20,
-        padding: 35,
+        borderWidth: 4,
+        borderColor: "#69140e",
+        padding: 40,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -45,14 +47,33 @@ export const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5
     },
+    input: {
+        color: "#f2f3ae",
+        backgroundColor: '#3c1518',
+        height: 64,
+        marginBottom: 12,
+        borderWidth: 5,
+        borderColor: "#69140e",
+        padding: 10,
+        borderRadius: 50,
+        alignSelf: 'stretch',
+        paddingHorizontal: 30,
+        fontWeight: "800",
+        fontSize: 18,
+        textAlign: "center"
+    },
+    barStyle: {
+        color: 'white'
+    }
 });
 
 export const typography = StyleSheet.create({
     header: {
         color: "#d58936",
-        fontSize: 30,
+        fontSize: 40,
         marginBottom: 36,
         fontWeight: "800",
+        fontStyle:"italic",
         textTransform: "uppercase"
     },
 

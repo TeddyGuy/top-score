@@ -1,4 +1,4 @@
-import { Text, View,  Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Text, View,  Modal, TouchableOpacity, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { styles, typography } from './AppStyle';
 import AppButton from './components/AppButton/AppButton';
 import { RootSiblingParent } from 'react-native-root-siblings';
@@ -7,10 +7,13 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from './firebaseConfig';
 import * as Device from 'expo-device';
 import React, { useState } from "react";
+import JoinGameForm from './containers/JoinGameForm/JoinGameForm';
+import CreateGameForm from './containers/CreateGameForm/CreateGameForm';
 
 export const App = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [activeModalContent, setActiveModal] = useState(undefined);
 
   const handlePingMe = async () => {
     try {
@@ -21,25 +24,31 @@ export const App = () => {
         duration: Toast.durations.LONG,
       });
     } catch (e) {
-      console.error('No response from the server :( ', e);
+      Toast.show('No response from server :(', {
+        duration: Toast.durations.LONG,
+      });
     }
   }
   
-  const handleCreateGame = async () => {
+  const handleShowCreateGameForm = async () => {
     setModalVisible(true);
+    setActiveModal(<CreateGameForm/>);
   }
 
-  const handleJoinGame = async () => {
+  const handleShowJoinGameForm = async () => {
     setModalVisible(true);
+    setActiveModal(<JoinGameForm/>);
   }
 
   return (
     <RootSiblingParent>
+      
       <View style={styles.container}>
+        <StatusBar translucent/>
         <Text style={typography.header} >Top Score</Text>
         <View>
-          <AppButton title="Join Game" onPress={handleJoinGame}/>
-          <AppButton title="Create Game" onPress={handleCreateGame}/>
+          <AppButton title="Join Game" onPress={handleShowJoinGameForm}/>
+          <AppButton title="Create Game" onPress={handleShowCreateGameForm}/>
           <AppButton title="Ping Me 👋" onPress={handlePingMe}/>
         </View>
         
@@ -56,7 +65,7 @@ export const App = () => {
                   <TouchableWithoutFeedback>
                     
                     <View style={styles.modalView}>
-                      <Text style={typography.text}>Wow</Text>
+                      { activeModalContent }
                     </View>
                     
                   </TouchableWithoutFeedback>
