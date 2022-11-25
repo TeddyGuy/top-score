@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
-        padding: 24,
+        padding: 18,
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
         borderRadius: 50,
         paddingVertical: 16,
         paddingHorizontal: 30,
-        marginBottom: 12,
+        marginVertical: 10,
         alignSelf: 'stretch'
     },
     centeredView: {
@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
         marginTop: 22
     },
     modalView: {
-        margin: 20,
+        margin: 12,
         backgroundColor: "#3c1518",
         borderRadius: 20,
         borderWidth: 4,
@@ -85,9 +85,16 @@ export const typography = StyleSheet.create({
         textTransform: "uppercase"
     },
 
-    text: {
+    header2: {
+        color: "#f2f3ae",
+        marginBottom: 20,
+        fontWeight: "700",
+        fontSize: 28
+    },
+
+    text2: {
         color: "#f2f3ae",
         fontWeight: "500",
-        fontSize: 14
+        fontSize: 18
     }
 });
