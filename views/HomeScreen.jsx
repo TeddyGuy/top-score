@@ -43,6 +43,13 @@ export const HomeScreen = ({navigation}) => {
 
         const room = docSnap.data();
 
+        if(room.players.length >= room.roomSize){
+            Toast.show('This room is full 🛑', {
+                duration: 5000,
+            });
+            return;
+        }
+
         await setDoc(docRef, { players:[...room.players,formData.name] }, {merge: true});
 
         Keyboard.dismiss()
@@ -51,19 +58,24 @@ export const HomeScreen = ({navigation}) => {
         Toast.show('Joined room, waiting for more players 👾', {
             duration: 5000,
         });
+
+        navigation.navigate('GuestLobby', {roomId: formData.room});
+        setPlayer(formData.name);
     }
 
     const handleCreateGame = async (formData) => {
         try {
             let roomId = Math.random().toString(36).substr(2, 10).toUpperCase();
+            console.log(formData);
             await setDoc(doc(db, "rooms", roomId), {
                 players:[formData.name],
-                host:formData.name
+                host:formData.name,
+                roomSize:formData.roomSize
             });
-            Toast.show('Lobby Successfully Created', {
+            Toast.show('Lobby Successfully Created 🎮', {
             duration: 5000,
             });
-            navigation.navigate('Lobby', {roomId: roomId});
+            navigation.navigate('HostLobby', {roomId: roomId});
             setPlayer(formData.name);
         } catch (e) {
             console.log(e);

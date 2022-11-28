@@ -1,7 +1,7 @@
 import { TextInput } from "react-native"
 import { styles } from "../../AppStyle"
 
-export const AppInput = ({ref, placeholder, onChangeText, value}) => {
+export const AppInput = ({ref, placeholder, onChangeText, value, keyboardType, maxLength}) => {
     return <TextInput 
     style={styles.input} 
     ref={ref} 
@@ -12,8 +12,8 @@ export const AppInput = ({ref, placeholder, onChangeText, value}) => {
     cursorColor={"#69140E"}
     autoCapitalize="none"
     secureTextEntry={true}
-    keyboardType={"visible-password"}
-    maxLength={12}
+    keyboardType={(keyboardType ? keyboardType : "visible-password")}
+    maxLength={(maxLength ? maxLength : 12)}
     />
 }
 
