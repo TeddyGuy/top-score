@@ -13,7 +13,7 @@ import { GameContext } from '../App';
 export const HomeScreen = ({navigation}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeModalContent, setActiveModal] = useState(undefined);
-    const {player, setPlayer} = useContext(GameContext);
+    const {player, setPlayer, setOtherPlayers} = useContext(GameContext);
 
     const handlePingMe = async () => {
         try {
@@ -50,7 +50,16 @@ export const HomeScreen = ({navigation}) => {
             return;
         }
 
-        await setDoc(docRef, { players:[...room.players,formData.name] }, {merge: true});
+        const playerWithNameFound = room.players.find(player => player.name === formData.name);
+
+        if(playerWithNameFound){
+            Toast.show('Name taken 🤕', {
+                duration: 5000,
+            });
+            return;
+        }
+
+        await setDoc(docRef, { players:[...room.players,{name:formData.name, score:0}] }, {merge: true});
 
         Keyboard.dismiss()
         setModalVisible(false);
@@ -59,16 +68,18 @@ export const HomeScreen = ({navigation}) => {
             duration: 5000,
         });
 
+        
+        setOtherPlayers(room.players.filter((otherPlayer) => formData.name !== otherPlayer.name ))
+        setPlayer({name:formData.name, score:0});
+
         navigation.navigate('GuestLobby', {roomId: formData.room});
-        setPlayer(formData.name);
     }
 
     const handleCreateGame = async (formData) => {
         try {
-            let roomId = Math.random().toString(36).substr(2, 10).toUpperCase();
-            console.log(formData);
+            let roomId = Math.random().toString(36).substr(2, 6).toUpperCase();
             await setDoc(doc(db, "rooms", roomId), {
-                players:[formData.name],
+                players:[{name:formData.name, score:0}],
                 host:formData.name,
                 roomSize:formData.roomSize
             });
@@ -76,7 +87,7 @@ export const HomeScreen = ({navigation}) => {
             duration: 5000,
             });
             navigation.navigate('HostLobby', {roomId: roomId});
-            setPlayer(formData.name);
+            setPlayer({name:formData.name, score:0});
         } catch (e) {
             console.log(e);
             Toast.show('Failed to create a room', {

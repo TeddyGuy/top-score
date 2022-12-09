@@ -74,7 +74,8 @@ export const typography = StyleSheet.create({
         marginBottom: 36,
         fontWeight: "800",
         fontStyle:"italic",
-        textTransform: "uppercase"
+        textTransform: "uppercase",
+        textAlign: 'center'
     },
 
     button: {

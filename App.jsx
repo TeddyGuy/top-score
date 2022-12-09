@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './views/HomeScreen';
 import HostLobbyScreen from './views/HostLobbyScreen';
 import GuestLobbyScreen from './views/GuestLobbyScreen';
+import OutOfTheLoopGameScreen from './views/OutOfTheLoopGameScreen';
 
 const Stack = createNativeStackNavigator();
 export const GameContext = createContext();
@@ -33,6 +34,11 @@ export const App = () => {
             <Stack.Screen
               name="GuestLobby"
               component={GuestLobbyScreen}
+              options={{ statusBarHidden: true, headerShown: false,  }}
+            />
+            <Stack.Screen
+              name="OutOfTheLoop"
+              component={OutOfTheLoopGameScreen}
               options={{ statusBarHidden: true, headerShown: false,  }}
             />
           </Stack.Navigator>

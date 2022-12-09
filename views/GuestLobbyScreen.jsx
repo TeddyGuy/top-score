@@ -3,7 +3,7 @@ import { Text, View,  Modal, TouchableOpacity, TouchableWithoutFeedback } from '
 import AppButton from "../components/AppButton/AppButton";
 import React, {useEffect, useState, useContext } from "react";
 import { GameContext } from "../App";
-import { doc, getDoc, deleteDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc, setDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import Toast from "react-native-root-toast";
 import clearGameContext from "../hooks/ClearGameContext";
@@ -23,6 +23,7 @@ export const GuestLobbyScreen = ({ navigation, route }) => {
             Toast.show('No room found 😔', {
                 duration: 5000,
             });
+            navigation.navigate("Home");
             return;
         }
 
@@ -34,28 +35,25 @@ export const GuestLobbyScreen = ({ navigation, route }) => {
         setPlayer(undefined);
     }
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            const docRef = doc(db, "rooms", route.params.roomId);
-            const docSnap = await getDoc(docRef);
+    useEffect(() => onSnapshot(doc(db, "rooms", route.params.roomId), (docSnap) => {
+        if(!docSnap.exists()){
+            Toast.show('No room found 😔', {
+                duration: 5000,
+            });
+            navigation.navigate("Home");
+            return;
+        }
 
-            if(!docSnap.exists()){
-                Toast.show('No room found 😔', {
-                    duration: 5000,
-                });
-                return;
-            }
+        const room = docSnap.data();
+        
+        if(player) {
+            setOtherPlayers(room.players.filter((otherPlayer) => player.name !== otherPlayer.name ));
+        }
 
-            const room = docSnap.data();
-            
-            if(player) {
-                setOtherPlayers(room.players.filter((otherPlayer) => player != otherPlayer ));
-            }
-
-        }, 1500);
-      
-        return () => clearInterval(interval);
-    });
+        if(room.game === "OOTL"){
+            navigation.navigate('OutOfTheLoop',   {roomId: route.params.roomId});
+        }
+    }), []);
 
     useEffect(() => {
         navigation.addListener('beforeRemove', (e) => {
@@ -82,9 +80,9 @@ export const GuestLobbyScreen = ({ navigation, route }) => {
     const handleShowPlayers = async () => {
         setActiveModal(
             <View>
-                <Text style={typography.header}>{player}</Text>
+                <Text style={typography.header}>{player.name}</Text>
                 {otherPlayers.map((otherPlayer, key) => (
-                    <Text key={key} style={typography.header2}>{otherPlayer}</Text>
+                    <Text key={key} style={typography.header2}>{otherPlayer.name}</Text>
                 ))}
             </View>
         );

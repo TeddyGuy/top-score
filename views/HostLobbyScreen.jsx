@@ -3,12 +3,13 @@ import { Text, View,  Modal, TouchableOpacity, TouchableWithoutFeedback } from '
 import AppButton from "../components/AppButton/AppButton";
 import React, {useEffect, useState, useContext } from "react";
 import { GameContext } from "../App";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc , setDoc , onSnapshot} from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import Toast from "react-native-root-toast";
 import clearGameContext from "../hooks/ClearGameContext";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
 
-
+const MIN_AMOUNT_OF_PLAYER = 3;
 export const HostLobbyScreen = ({ navigation, route }) => {
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -22,28 +23,25 @@ export const HostLobbyScreen = ({ navigation, route }) => {
         await deleteDoc(doc(db,"rooms", route.params.roomId));
     }
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            const docRef = doc(db, "rooms", route.params.roomId);
-            const docSnap = await getDoc(docRef);
+    useEffect(() => onSnapshot(doc(db, "rooms", route.params.roomId), (docSnap) => {
+        if(!docSnap.exists()){
+            Toast.show('No room found 😔', {
+                duration: 5000,
+            });
+            return;
+        }
 
-            if(!docSnap.exists()){
-                Toast.show('No room found 😔', {
-                    duration: 5000,
-                });
-                return;
-            }
+        const room = docSnap.data();
+        console.log(room)
+        
+        if(player) {
+            setOtherPlayers(room.players.filter((otherPlayer) => player.name !== otherPlayer.name ));
+        }
 
-            const room = docSnap.data();
-            
-            if(player) {
-                setOtherPlayers(room.players.filter((otherPlayer) => player != otherPlayer ));
-            }
-
-        }, 1500);
-      
-        return () => clearInterval(interval);
-    });
+        if(room.game === "OOTL"){
+            navigation.navigate('OutOfTheLoop',   {roomId: route.params.roomId});
+        }
+    }), []);
 
     useEffect(() => {
         navigation.addListener('beforeRemove', (e) => {
@@ -70,20 +68,33 @@ export const HostLobbyScreen = ({ navigation, route }) => {
     const handleShowPlayers = async () => {
         setActiveModal(
             <View>
-                <Text style={typography.header}>{player}</Text>
+                <Text style={typography.header}>{player.name}</Text>
                 {otherPlayers.map((otherPlayer, key) => (
-                    <Text key={key} style={typography.header2}>{otherPlayer}</Text>
+                    <Text key={key} style={typography.header2}>{otherPlayer.name}</Text>
                 ))}
             </View>
         );
         setModalVisible(true);
     }
 
+    const handleStartGame = async () => {
+        if (otherPlayers.length + 1 < MIN_AMOUNT_OF_PLAYER) {
+            Toast.show(`You need ${MIN_AMOUNT_OF_PLAYER - otherPlayers.length - 1} other players to start a game 😔`, {
+                duration: 5000,
+            });
+            return;
+        }
+
+        const docRef = doc(db, "rooms", route.params.roomId);
+        await setDoc(docRef, {game: "OOTL"}, {merge: true})
+        navigation.navigate('OutOfTheLoop',   {roomId: route.params.roomId});
+    }
+
     return(
         <View style={styles.container}>
             <Text style={typography.header2}>Room number</Text>
             <Text style={typography.header}>{route.params.roomId}</Text>
-            <AppButton title={"Start"}/>
+            <AppButton title={"Start"} onPress={handleStartGame} />
             <AppButton title={`Number of Players: ${otherPlayers.length}`} onPress={handleShowPlayers}/>
 
             <Modal
